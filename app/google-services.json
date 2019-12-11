@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "634853290743",
+    "firebase_url": "https://sasi-3a354.firebaseio.com",
+    "project_id": "sasi-3a354",
+    "storage_bucket": "sasi-3a354.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:634853290743:android:35b42e91d4c6b433ee99f2",
+        "android_client_info": {
+          "package_name": "yasis.apps.sasi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "634853290743-odi9npd4f33m134nphfaapaf6t5gq1vt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRk1MMbd9F46HbgVyAqan3dcxiX43YImA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "634853290743-odi9npd4f33m134nphfaapaf6t5gq1vt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
