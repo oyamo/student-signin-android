@@ -34,6 +34,7 @@ android:id="@+id/coord"/>
 			<TextView
 					android:layout_width="match_parent"
 					android:textSize="20dp"
+					android:id="@+id/unitName"
 					android:overScrollMode="ifContentScrolls"
 					android:textColor="#fff"
 					android:layout_marginTop="20dp"
@@ -45,6 +46,7 @@ android:id="@+id/coord"/>
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:text="SC-01"
+					android:id="@+id/venue"
 					android:textAlignment="center"
 					android:layout_marginTop="10dp"
 					android:textColor="#e2FFFFFF"/>
@@ -63,6 +65,38 @@ android:id="@+id/coord"/>
 			android:foreground="?android:attr/selectableItemBackground"
 			android:paddingRight="12dp"
 			android:layout_margin="10dp"
+			android:id="@+id/signInbtn"
 			android:text="Sign in Attendance"
 			android:layout_height="wrap_content"/>
+	<ProgressBar
+			android:layout_below="@id/signInbtn"
+			android:layout_width="30dp"
+			android:layout_height="30dp"
+			android:id="@+id/progressAttend"
+			android:layout_marginTop="20dp"
+			android:layout_centerHorizontal="true"/>
+	<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_below="@id/progressAttend"
+			android:orientation="vertical"
+			android:layout_marginTop="20dp"
+			android:visibility="gone"
+			android:id="@+id/errorPane"
+			android:layout_height="wrap_content">
+		<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_horizontal"
+				android:layout_margin="10dp"
+				android:text="Could not load details from server"/>
+		<Button
+				android:layout_width="wrap_content"
+				android:paddingRight="20dp"
+				android:paddingLeft="20dp"
+				android:layout_gravity="center_horizontal"
+				android:onClick="Retry"
+				android:background="@drawable/white_btn_background"
+				android:text="Try again"
+				android:layout_height="wrap_content"/>
+	</LinearLayout>
 </RelativeLayout>

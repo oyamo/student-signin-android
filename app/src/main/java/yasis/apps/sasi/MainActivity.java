@@ -19,6 +19,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentTransaction;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import static java.lang.Thread.sleep;
 
@@ -28,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        final FirebaseAuth auth = FirebaseAuth.getInstance();
+        final FirebaseUser user = auth.getCurrentUser();
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -38,7 +42,11 @@ public class MainActivity extends AppCompatActivity {
 
                        getPerm();
                     }else{
-                        startActivity(new Intent(MainActivity.this,Login.class));
+                        if(user != null){
+                            startActivity(new Intent(MainActivity.this,Attend.class));
+                        }else{
+                            startActivity(new Intent(MainActivity.this,Login.class));
+                        }
                     }
 
                 } catch (InterruptedException e) {
