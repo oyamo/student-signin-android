@@ -59,6 +59,7 @@ android:id="@+id/coord"/>
 			android:layout_centerHorizontal="true"
 			android:paddingLeft="12dp"
 			android:textStyle="bold"
+			android:onClick="SignIn"
 			android:fontFamily="sans-serif-black"
 			android:textColor="@color/colorAccent"
 			android:clickable="true"
@@ -69,11 +70,16 @@ android:id="@+id/coord"/>
 			android:text="Sign in Attendance"
 			android:layout_height="wrap_content"/>
 	<ProgressBar
-			android:layout_below="@id/signInbtn"
 			android:layout_width="30dp"
 			android:layout_height="30dp"
+			android:layout_below="@id/signInbtn"
 			android:id="@+id/progressAttend"
-			android:layout_marginTop="20dp"
+			android:layout_centerHorizontal="true"/>
+	<ProgressBar
+			android:layout_width="30dp"
+			android:layout_below="@id/signInbtn"
+			android:layout_height="30dp"
+			android:id="@+id/progressLocation"
 			android:layout_centerHorizontal="true"/>
 	<LinearLayout
 			android:layout_width="match_parent"

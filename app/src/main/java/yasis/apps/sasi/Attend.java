@@ -2,25 +2,22 @@ package yasis.apps.sasi;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Build;
 import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.*;
 
 import java.util.Calendar;
@@ -29,9 +26,13 @@ import java.util.Date;
 public class Attend extends AppCompatActivity {
     LocationManager locationManager;
     DatabaseReference mReference;
-    ProgressBar progressBar;
+    ProgressBar progressBar,progressLocation;
     LinearLayout errorPane;
     TextView venue, unitName;
+    Button signInBtn ;
+    String Unit;
+    double longitude, Latitude,alt,long0,long1,alt0,alt1,lat0,lat1;
+    FirebaseAuth mAuth;
     @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,12 +41,16 @@ public class Attend extends AppCompatActivity {
         progressBar = findViewById(R.id.progressAttend);
         errorPane = findViewById(R.id.errorPane);
         venue = findViewById(R.id.venue);
+        progressLocation = findViewById(R.id.progressLocation);
+        signInBtn = findViewById(R.id.signInbtn);
+        signInBtn.setEnabled(false);
         venue.setText("----");
         unitName = findViewById(R.id.unitName);
         unitName.setText("----");
         progressBar.setVisibility(View.GONE);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         mReference = FirebaseDatabase.getInstance().getReference("timetable").child("MMU");
+        mAuth = FirebaseAuth.getInstance();
         getLesson();
         if(!hasPermision()){
             getPerm();
@@ -58,12 +63,16 @@ public class Attend extends AppCompatActivity {
     private final LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
-            double alt = location.getAltitude();
-            double x = location.getLatitude();
-            double y = location.getLongitude();
+            alt = location.getAltitude();
+            Latitude = location.getLatitude();
+            longitude = location.getLongitude();
+            progressLocation.setVisibility(View.GONE);
+            if(isInClass()) signInBtn.setEnabled(true);
             //((TextView)findViewById(R.id.coord)).setText("lat:"+x+", long:"+y+", alt:"+alt);
         }
-
+        //-1.3799712248146534 lat
+        //1758 alt
+        //36.76577850244939 long
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
 
@@ -118,15 +127,33 @@ public class Attend extends AppCompatActivity {
         Date currentDate = Calendar.getInstance().getTime();
         String[] days = new String[]{"Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"};
         int dayOfWeekInt = currentDate.getDay();
-        String dayOfWeek = days[dayOfWeekInt-1];
-        DatabaseReference unit = mReference.child(dayOfWeek).child("Unit");
-        unit.addValueEventListener(new ValueEventListener() {
+        final String dayOfWeek = days[dayOfWeekInt-1];
+//        DatabaseReference unit = mReference.child(dayOfWeek).child("Unit");
+//        DatabaseReference venue = mReference.child(dayOfWeek).child("Venue");
+//        DatabaseReference lat = mReference.child(dayOfWeek).child("Coords").child("Lat");
+//        DatabaseReference longitude = mReference.child(dayOfWeek).child("Coords").child("Long");
+//        DatabaseReference alt = mReference.child(dayOfWeek).child("Coords").child("Alt");
+        mReference.child(dayOfWeek).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 progressBar.setVisibility(View.GONE);
                 errorPane.setVisibility(View.GONE);
-                String unit = dataSnapshot.getValue(String.class);
+
+                String unit = dataSnapshot.child("Unit").getValue(String.class);
+                Unit = unit;
+                String v = dataSnapshot.child("Venue").getValue(String.class);
+                lat0 = dataSnapshot.child("Coords").child("Lat0").getValue(Double.class);
+                lat1 = dataSnapshot.child("Coords").child("Lat1").getValue(Double.class);
+//                String lat = lat_.toString();
+                long0 = dataSnapshot.child("Coords").child("Long0").getValue(Double.class);
+                long1 = dataSnapshot.child("Coords").child("Long1").getValue(Double.class);
+//                String Long = long_.toString();
+                 alt0 = dataSnapshot.child("Coords").child("Alt0").getValue(Double.class);
+                 alt1 = dataSnapshot.child("Coords").child("Alt1").getValue(Double.class);
+//                String alt = alt_.toString();
+                if(isInClass()) signInBtn.setEnabled(true);
                 unitName.setText(unit);
+                venue.setText(v);
             }
 
             @Override
@@ -136,6 +163,7 @@ public class Attend extends AppCompatActivity {
                 //Toast.makeText(Attend.this, "Error while getting data"+databaseError., Toast.LENGTH_SHORT).show();
             }
         });
+
 
     }
 
@@ -149,5 +177,39 @@ public class Attend extends AppCompatActivity {
 
     public void Retry(View view) {
         getLesson();
+    }
+    public boolean isInClass(){
+        boolean inClass = false;
+        if(Latitude< lat0 && Latitude> lat1 &&
+            longitude>long0 && longitude<long1
+             && alt>alt0 && alt<alt1)
+            inClass = true;
+        return inClass;
+    }
+
+    public void SignIn(View view) {
+        progressBar.setVisibility(View.VISIBLE);
+        Date currentDate = Calendar.getInstance().getTime();
+        String[] days = new String[]{"Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"};
+        int dayOfWeekInt = currentDate.getDay();
+        final String dayOfWeek = days[dayOfWeekInt-1];
+        String date = currentDate.getDate()+"-"+currentDate.getMonth()+"-"+currentDate.getYear();
+        FirebaseUser user = mAuth.getCurrentUser();
+        String email = user.getEmail().replaceAll("[\\W.]","_");
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("SignUps");
+        databaseReference
+                    .child(date)
+                    .child(Unit)
+                    .child("email").setValue(email, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                progressBar.setVisibility(View.GONE);
+                if(databaseError!=null){
+                    Toast.makeText(Attend.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+             });
+
+
     }
 }
