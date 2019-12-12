@@ -51,12 +51,9 @@ public class Attend extends AppCompatActivity {
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         mReference = FirebaseDatabase.getInstance().getReference("timetable").child("MMU");
         mAuth = FirebaseAuth.getInstance();
+        getLocation();
         getLesson();
-        if(!hasPermision()){
-            getPerm();
-        }else{
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 20, 1, locationListener);
-        }
+
 
 
     }
@@ -200,7 +197,7 @@ public class Attend extends AppCompatActivity {
         databaseReference
                     .child(date)
                     .child(Unit)
-                    .child("email").setValue(email, new DatabaseReference.CompletionListener() {
+                    .child(email).setValue("attended", new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                 progressBar.setVisibility(View.GONE);
@@ -210,6 +207,14 @@ public class Attend extends AppCompatActivity {
             }
              });
 
-
     }
+    @SuppressLint("MissingPermission")
+    public  void getLocation(){
+        if(!hasPermision()){
+            getPerm();
+        }else{
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 20, 1, locationListener);
+        }
+    }
+
 }
