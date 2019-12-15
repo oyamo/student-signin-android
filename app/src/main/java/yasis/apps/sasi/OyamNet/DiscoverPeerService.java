@@ -1,4 +1,4 @@
 package yasis.apps.sasi.OyamNet;
 
-public class WifiState {
+public class PeerScanService {
 }
