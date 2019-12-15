@@ -2,11 +2,14 @@ package yasis.apps.sasi;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.wifi.p2p.WifiP2pManager;
 import android.view.View;
 import android.widget.*;
 import androidx.annotation.NonNull;
@@ -19,6 +22,7 @@ import androidx.core.content.ContextCompat;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.*;
+import yasis.apps.sasi.OyamNet.p2pNet;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -31,13 +35,23 @@ public class Attend extends AppCompatActivity {
     TextView venue, unitName;
     Button signInBtn ;
     String Unit;
+    p2pNet oyamnet;
     double longitude, Latitude,alt,long0,long1,alt0,alt1,lat0,lat1;
     FirebaseAuth mAuth;
+    private final IntentFilter intentFilter = new IntentFilter();
+    private WifiP2pManager.Channel channel;
+    WifiP2pManager manager;
     @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_attend);
+        //Register the Intents
+
+
+
+
+        //Register the UI IDs
         progressBar = findViewById(R.id.progressAttend);
         errorPane = findViewById(R.id.errorPane);
         venue = findViewById(R.id.venue);
@@ -48,12 +62,15 @@ public class Attend extends AppCompatActivity {
         unitName = findViewById(R.id.unitName);
         unitName.setText("----");
         progressBar.setVisibility(View.GONE);
+        //Initialise the location manager and DatabaseReference
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         mReference = FirebaseDatabase.getInstance().getReference("timetable").child("MMU");
         mAuth = FirebaseAuth.getInstance();
+        //Start Listening to change in location
         getLocation();
+        //Fetch Database Details from the  remote server
         getLesson();
-
+        oyamnet = new p2pNet(this,intentFilter);
 
 
     }
@@ -171,6 +188,7 @@ public class Attend extends AppCompatActivity {
         moveTaskToBack(true);
 
     }
+
 
     public void Retry(View view) {
         getLesson();

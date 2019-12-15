@@ -3,10 +3,9 @@ package yasis.apps.sasi.OyamNet;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.net.wifi.p2p.WifiP2pManager;
 
-public class ChangesReceiver extends BroadcastReceiver {
-    public ChangesReceiver changesReceiver;
+public class NetBroadCastListener extends BroadcastReceiver {
+    public NetBroadCastListener netBroadCastListener;
     @Override
     public void onReceive(Context context, Intent intent) {
 

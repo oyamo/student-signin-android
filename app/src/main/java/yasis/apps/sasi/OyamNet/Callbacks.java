@@ -1,8 +1,8 @@
 package yasis.apps.sasi.OyamNet;
 
-public interface NetCallBacks {
+public interface Callbacks {
     void onPeersChanged();
     void onP2PConnectionChanged();
-    void onP2PStateChanged(WifiState wifiState);
+    void onP2PStateChanged(WifiProps wifiProps);
     void onThisDeviceChanged();
 }
