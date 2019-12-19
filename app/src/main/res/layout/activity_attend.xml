@@ -6,7 +6,7 @@
 		android:layout_width="match_parent"
 		android:background="#ffffffff"
 		android:layout_height="match_parent"
-		tools:context=".Attend">
+		tools:context=".activityAttend">
 	<LinearLayout
 			android:layout_width="match_parent"
 			android:layout_height="300dp"
@@ -23,6 +23,7 @@ android:id="@+id/coord"/>
 			android:id="@+id/lesson_details"
 			app:cardCornerRadius="5dp"
 			android:layout_margin="10dp"
+			app:cardElevation="20dp"
 			app:cardBackgroundColor="@color/colorAccent"
 			>
 		<LinearLayout

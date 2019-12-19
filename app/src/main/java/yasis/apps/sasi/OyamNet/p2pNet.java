@@ -3,10 +3,14 @@ package yasis.apps.sasi.OyamNet;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.wifi.WifiManager;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
+import android.util.Log;
+import android.widget.Toast;
+import yasis.apps.sasi.alertDialog;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -91,7 +95,10 @@ public class p2pNet extends NetBroadCastListener implements Callbacks {
                     }
                 });
         ///Register the discover service
+
         final HashMap<String,Peer> buddies = new HashMap<>();
+        WifiManager wifi = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        if(!wifi.isWifiEnabled()) wifi.setWifiEnabled(true);
         WifiP2pManager.DnsSdTxtRecordListener txtRecordListener = new WifiP2pManager.DnsSdTxtRecordListener() {
             @Override
             public void onDnsSdTxtRecordAvailable(String fullDomainName, Map<String, String> txtRecordMap, WifiP2pDevice srcDevice) {
@@ -111,8 +118,25 @@ public class p2pNet extends NetBroadCastListener implements Callbacks {
         };
         wifiP2pManager.setDnsSdResponseListeners(channel,responseListener,txtRecordListener);
         WifiP2pDnsSdServiceRequest serviceRequest = WifiP2pDnsSdServiceRequest.newInstance();
-        wifiP2pManager.addLocalService(channel, serviceRequest,
+        wifiP2pManager.addLocalService(channel, serviceInfo,
                 new WifiP2pManager.ActionListener() {
+                    @Override
+                    public void onSuccess() {
+
+                    }
+
+                    @Override
+                    public void onFailure(int reason) {
+                        if(reason==WifiP2pManager.BUSY) alertDialog.show(context,
+                                "ERROR",
+                                "Please disable your wifi tethering for a moment",
+                                "Close"
+                                );
+
+                    }
+                });
+        wifiP2pManager.addServiceRequest(channel, serviceRequest
+                , new WifiP2pManager.ActionListener() {
                     @Override
                     public void onSuccess() {
 
